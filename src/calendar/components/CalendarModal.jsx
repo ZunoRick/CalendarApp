@@ -10,6 +10,8 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { es } from 'date-fns/locale/es';
 
+import { useUiStore } from "../../hooks/useUiStore";
+
 registerLocale('es', es)
 
 const customStyles = {
@@ -26,7 +28,9 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 export const CalendarModal = () => {
-  const [isOpen, setIsOpen] = useState(true)
+
+  const { isDateModalOpen, closeDateModal } = useUiStore()
+
   const [formSubmited, setFormSubmited] = useState(false)
   const [formValues, setFormValues] = useState({
     title: '',
@@ -55,10 +59,6 @@ export const CalendarModal = () => {
     })
   }
 
-  const onCloseModal = () => {
-    setIsOpen(false)
-  }
-
   const onSubmit = (event) => {
     event.preventDefault()
     setFormSubmited(true)
@@ -80,8 +80,8 @@ export const CalendarModal = () => {
 
   return (
     <Modal
-      isOpen={isOpen}
-      onRequestClose={ onCloseModal }
+      isOpen={isDateModalOpen}
+      onRequestClose={ closeDateModal }
       style={customStyles}
       className="modal"
       overlayClassName="modal-fondo"
