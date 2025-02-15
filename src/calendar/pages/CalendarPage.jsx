@@ -1,33 +1,17 @@
 import { useState } from 'react'
-import { Calendar, Views } from 'react-big-calendar'
+import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { addHours } from 'date-fns'
-import { CalendarEvent, CalendarModal, Navbar } from "../"
+import { CalendarEvent, CalendarModal, FabAddNew, FabDelete, Navbar } from "../"
 import { localizer, getMessagesES } from '../../helpers'
-import { useUiStore } from '../../hooks/useUiStore'
-
-const events = [{
-  title: 'CUmpleaños del jefe',
-  notes: 'Hay que comprar el pastel',
-  start: new Date(),
-  end: addHours(new Date(), 2),
-  bgColor: '#fafafa',
-  user: {
-    _id: '123',
-    name: 'Ricardo'
-  }
-}]
+import { useUiStore, useCalendarStore } from '../../hooks'
 
 export const CalendarPage = () => {
+
+  const { events, setActiveEvent } = useCalendarStore()
   const { openDateModal } = useUiStore()
 
-  const [language, setLanguage] = useState(false)
   const [currentView, setCurrentView] = useState(localStorage.getItem('lastView') || 'week')
   const [currentDate, setCurrentDate] = useState(new Date())
-
-  const onChangeLanguage = () => {
-    setLanguage(current => !current)
-  }
 
   const eventStyleGetter = (event, start, end, isSelected) => {
     // console.log({ event, start, end, isSelected });
@@ -43,14 +27,9 @@ export const CalendarPage = () => {
     }
   }
 
-  const onDoubleClick = (event) => {
-    // console.log({ doubleClick: event });
-    openDateModal()
-  }
-
   const onSelect = (event) => {
-    console.log ({ click: event });
-    
+    // console.log ({ click: event });
+    setActiveEvent(event)
   }
 
   const onViewChanged = (event) => {
@@ -64,7 +43,7 @@ export const CalendarPage = () => {
 
       <div>
         <Calendar
-          culture={ language || 'es' }
+          culture='es'
           localizer={localizer}
           events={events}
           startAccessor="start"
@@ -79,12 +58,16 @@ export const CalendarPage = () => {
           components={{
             event: CalendarEvent
           }}
-          onDoubleClickEvent={ onDoubleClick }
+          onDoubleClickEvent={ openDateModal }
           onSelectEvent={ onSelect }
         />
       </div>
 
       <CalendarModal/>
+
+      <FabAddNew/>
+
+      <FabDelete/>
     </>
   )
 }
